@@ -1,8 +1,11 @@
 import { isAddTaskContainerClicked } from "./inbox";
-
-
-const hello = isAddTaskContainerClicked();
-console.log(hello,'hello');
+import {isAddTaskContainerClickedProject} from './project'
 
 
 
+function landingPage() {
+isAddTaskContainerClicked()
+
+}
+
+landingPage();

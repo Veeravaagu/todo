@@ -5,7 +5,7 @@ const inboxElement = document.querySelector('.main-content-container');
 function inboxBuilder() {
     // Create inbox title
     const inboxTitle = document.createElement('h2');
-    inboxTitle.textContent = "INBOX";
+    inboxTitle.textContent = "PROJECT";
     inboxElement.appendChild(inboxTitle);
 
     // Create "Add Task" container
@@ -24,7 +24,7 @@ function inboxBuilder() {
     return { addTaskContainer };
 }
 
-export function isAddTaskContainerClicked() {
+export function isAddTaskContainerClickedProject() {
     const inboxElementClicked = inboxBuilder();
     inboxElementClicked.addTaskContainer.addEventListener('click', () => addTaskButtonClicked());
 }
