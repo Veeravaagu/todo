@@ -1,11 +1,14 @@
-import { isAddTaskContainerClicked } from "./inbox";
-import {isAddTaskContainerClickedProject} from './project'
+// index.js
 
+import { isAddTaskContainerClicked, addProjectButtonClicked } from "./inbox";
+import { landingPage } from "./project";
 
+document.getElementById('inboxElement').addEventListener('click', () => {
+    isAddTaskContainerClicked();
+    // Add any additional logic specific to inbox
+});
 
-function landingPage() {
-isAddTaskContainerClicked()
-
-}
-
-landingPage();
+document.getElementById('projectElement').addEventListener('click', () => {
+    landingPage();
+    // Add any additional logic specific to project
+});
