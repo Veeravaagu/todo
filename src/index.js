@@ -1,3 +1,2 @@
-import {buildTask} from './inbox.js';
-
-buildTask()
+import {buildInbox} from './inbox.js';
+buildInbox()
