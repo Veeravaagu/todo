@@ -1,10 +1,10 @@
 import { CreateTodo } from './todolist.js';
 
-export function buildInbox() {
+export function buildInbox(paragraphContent = 'Inbox') {
   const mainContent = document.querySelector('.main-content-container');
   mainContent.innerHTML =
     `<div class="inbox-add-task">
-        <h2>INBOX</h2>
+        <h2>${paragraphContent.toUpperCase()}</h2>
         <button class="inbox-add-task-button"><span>+</span> Add Task</button>
         <div class="inbox-task-container"></div>
         <div class="inbox-task-card-container"></div>
@@ -70,5 +70,3 @@ export function buildInbox() {
 
   return { mainContent, addTaskButton, inboxTaskCard };
 }
-
-
