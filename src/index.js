@@ -1,27 +1,26 @@
-import {buildInbox} from './inbox.js';
-import {buildProject} from './project.js';
+// import {buildInbox} from './inbox.js';
+// import {buildProject} from './project.js';
+import { CreateTodo } from './todolist.js';
 
 function isInboxOrProject() {
-    console.log('isInboxOrProject function called');
+    // console.log('isInboxOrProject function called');
     const isInboxOrProjectNames = document.querySelectorAll('.page-title');
-    buildInbox()
+    CreateTodo.buildProjectOrInbox()
     isInboxOrProjectNames.forEach((element) => {
         element.addEventListener('click', (event) => {
             const target = event.target;
             const paragraphContent = target.textContent;
-            if(paragraphContent === 'Inbox'){
-                buildInbox(paragraphContent)
-            }
-            else if(paragraphContent === 'Add Projects'){
-                buildProject(paragraphContent)
-            }
-            else {
+            if(paragraphContent === 'Today' || paragraphContent === 'This Week'){
                 console.error("not valid mofo")
             }
-            console.log('Content inside <p>:', paragraphContent)
+            else {
+                CreateTodo.buildProjectOrInbox(paragraphContent)
+            }
+            // console.log('Content inside <p>:', paragraphContent)
             return {paragraphContent};
         });
     });
+    CreateTodo.createProject()
 }
 
 isInboxOrProject()
