@@ -2,24 +2,29 @@
 // import {buildProject} from './project.js';
 import { CreateTodo } from './todolist.js';
 
-function isInboxOrProject() {
-    const container = document.querySelector('.sidebar-container');
-    container.addEventListener('click', (event) => {
-        const target = event.target;
-        if (target.classList.contains('page-title')) {
-            const paragraphContent = target.textContent;
-            if (paragraphContent === 'Today' || paragraphContent === 'This Week') {
-                CreateTodo.buildProjectOrInbox(paragraphContent);
-            } else {
-                CreateTodo.buildProjectOrInbox(paragraphContent);
-                CreateTodo.handleAddTask(paragraphContent);
-            }
-        }
-    });
 
-    CreateTodo.createProject();
-}
+    function isInboxOrProject() {
+        const isInboxOrProjectNames = document.querySelectorAll('.page-title');
+        CreateTodo.initialize();
+        isInboxOrProjectNames.forEach((element) => {
+            element.addEventListener('click', (event) => {
+                const target = event.target;
+                const paragraphContent = target.textContent;
+                if (paragraphContent === 'Today' || paragraphContent === 'This Week') {
+                    CreateTodo.buildProjectOrInbox(paragraphContent);
+                    CreateTodo.appendTodoToDisplay(paragraphContent);
+                } else {
+                    CreateTodo.buildProjectOrInbox(paragraphContent);
+                    CreateTodo.handleAddTask(paragraphContent);
+                    CreateTodo.appendTodoToDisplay(paragraphContent);
+                }
+            });
+        });
+        CreateTodo.createProject();
+    }
+
+    // Your existing code here
+    isInboxOrProject();
+    // CreateTodo.initialize(); 
 
 
-
-isInboxOrProject();

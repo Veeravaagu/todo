@@ -1,4 +1,4 @@
-import { isToday, isThisWeek, startOfDay, endOfWeek, isWithinInterval } from 'date-fns';
+import { isToday, isThisWeek, startOfDay, endOfWeek, isWithinInterval, add } from 'date-fns';
 
 export class CreateTodo {
     constructor(title, dueDate, description, priority) {
@@ -8,6 +8,28 @@ export class CreateTodo {
         this.priority = priority;
         this.id = CreateTodo.generateUniqueId();
         // console.log(`New Todo created with ID: ${this.id}`);
+    }
+
+    static saveDataToLocalStorage() {
+        const dataToSave = {
+            taskCategories: CreateTodo.taskCategories,
+            projects: CreateTodo.projects,
+            // Add any other data you want to save
+        };
+
+        localStorage.setItem('todoData', JSON.stringify(dataToSave));
+    }
+
+    static loadDataFromLocalStorage() {
+        const savedData = localStorage.getItem('todoData');
+
+        if (savedData) {
+            const parsedData = JSON.parse(savedData);
+
+            // Restore taskCategories and other data
+            CreateTodo.taskCategories = parsedData.taskCategories || {};
+            CreateTodo.projects = parsedData.projects || [];
+        }
     }
 
     static generateUniqueId() {
@@ -21,7 +43,7 @@ export class CreateTodo {
 
     static appendTodoToDisplay(paragraphContent) {
         const inboxTaskCard = document.querySelector('.inbox-task-card-container');
-        const inboxTasks = CreateTodo.taskCategories[paragraphContent];
+        const inboxTasks = CreateTodo.taskCategories[paragraphContent] || []; // Check if inboxTasks is defined, use an empty array if not
     
         inboxTaskCard.innerHTML = '';
     
@@ -39,10 +61,10 @@ export class CreateTodo {
             inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
     
             // Log the task information
-            console.log(`Task "${todo.title}" with ID ${taskId} displayed in ${paragraphContent}`);
-            console.log('Actual Due Date:', new Date(todo.dueDate));
-            console.log('Today:', startOfDay(new Date()));
-            console.log('Is Today Task:', isToday(new Date(todo.dueDate)));
+            // console.log(`Task "${todo.title}" with ID ${taskId} displayed in ${paragraphContent}`);
+            // console.log('Actual Due Date:', new Date(todo.dueDate));
+            // console.log('Today:', startOfDay(new Date()));
+            // console.log('Is Today Task:', isToday(new Date(todo.dueDate)));
         });
     
         // Check if the task is scheduled for Today or This Week
@@ -67,19 +89,14 @@ export class CreateTodo {
                 inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
     
                 // Log the task information for Today or This Week
-                console.log(`Task "${todo.title}" with ID ${taskId} displayed in ${paragraphContent}`);
+                console.log(`Task "${todo.title}" with ID ${taskId} displayed in ${paragraphContent} yolo`);
                 console.log('Actual Due Date:', new Date(todo.dueDate));
                 console.log('Today:', startOfDay(new Date()));
                 console.log('Is Today Task:', isToday(new Date(todo.dueDate)));
-            } else {
-                // Add this log to check if the task is not being added to "Today" or "This Week"
-                console.log(`Task "${todo.title}" with ID ${taskId} NOT displayed in ${paragraphContent}`);
             }
         });
-    }
-    
-    
-    
+        CreateTodo.saveDataToLocalStorage();
+    }    
     
     static taskCategories = {
         'Inbox': [],
@@ -122,6 +139,7 @@ export class CreateTodo {
             // // console.log(CreateTodo.myArr[CreateTodo.myArr.length - 1],`paragraphContent is ${paragraphContent}`, 'todo');
             // console.log(CreateTodo.taskCategories,'check');
         }
+        CreateTodo.saveDataToLocalStorage();
     }
     static deleteTask(taskItem, paragraphContent) {
         // const inboxTaskCard = document.querySelector('.inbox-task-card-container');
@@ -134,6 +152,7 @@ export class CreateTodo {
         CreateTodo.taskCategories[paragraphContent] = CreateTodo.taskCategories[paragraphContent].filter(
             task => task.id !== parseInt(taskId)  
         );
+        CreateTodo.saveDataToLocalStorage();
     }
     
     
@@ -194,66 +213,74 @@ export class CreateTodo {
         });
         
         
-      
         function renderTaskForm() {
-          if (showTaskForm) {
-            inboxTaskCard.innerHTML = `
-              <form id="taskForm">
-                <div class="task-form-container">
-                  <label for="name">Name:</label>
-                  <input type="text" id="name" required>
-      
-                  <label for="description">Description:</label>
-                  <textarea id="description" rows="4" required></textarea>
-      
-                  <label for="date">Date:</label>
-                  <input type="date" id="date" required>
-      
-                  <label for="priority">Priority:</label>
-                  <select id="priority" required>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-      
-                  <button type="button" class="addTaskButton">Add</button>
-                  <button type="button" class="deleteButton">Delete</button>
-                </div>
-              </form>`;
-          } 
-          else {
-            inboxTaskCard.innerHTML = ``
+            if (showTaskForm) {
+                inboxTaskCard.innerHTML = `
+                    <form id="taskForm">
+                        <div class="task-form-container">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" required>
+        
+                            <label for="description">Description:</label>
+                            <textarea id="description" rows="4" required></textarea>
+        
+                            <label for="date">Date:</label>
+                            <input type="date" id="date" required>
+        
+                            <label for="priority">Priority:</label>
+                            <select id="priority" required>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+        
+                            <button type="button" class="addTaskButton">Add Task</button>
+                            <button type="button" class="deleteButton">Delete</button>
+                        </div>
+                    </form>`;
+            } else {
+                inboxTaskCard.innerHTML = '';
+            }
         }
-        }
+        
       
-        return { mainContent, addTaskButton, inboxTaskCard };
+
+        CreateTodo.saveDataToLocalStorage();  
       }
 
-    static createProject(){
+      static createProject() {
         const addProject = document.querySelector('.add-project');
         const addProjectContainer = document.querySelector('.add-project-container');
         let showProjectForm = false;
-        addProject.addEventListener('click',(event) => {
+        
+        addProject.addEventListener('click', (event) => {
             showProjectForm = !showProjectForm;
-            // console.log(showProjectForm,'add project')
             event.stopPropagation();
-            renderAddProject()})
-        addProjectContainer.addEventListener('click',(event) => {
+            renderAddProject();
+        });
+    
+        addProjectContainer.addEventListener('click', (event) => {
             const target = event.target;
             event.stopPropagation();
-            if(target.classList.contains('add-project-button')){
+            if (target.classList.contains('add-project-button')) {
                 CreateTodo.handleAddProject();
                 showProjectForm = !showProjectForm;
-                // console.log(showProjectForm,'add') 
-                renderAddProject()
-            } else if(target.classList.contains('cancel-project-button')){
+                renderAddProject();
+            } else if (target.classList.contains('cancel-project-button')) {
                 showProjectForm = !showProjectForm;
-                // console.log(showProjectForm, 'cancel') 
-                renderAddProject()
+                renderAddProject();
             }
-        });       
-
-        function renderAddProject(){
+        });
+    
+        function renderAddProject() {
+            CreateTodo.renderAddProject(showProjectForm);
+        }
+    
+        CreateTodo.saveDataToLocalStorage();
+    }
+    
+    static renderAddProject(showProjectForm){
+        const addProjectContainer = document.querySelector('.add-project-container');
             if(showProjectForm){
                 addProjectContainer.innerHTML = `
                 <div class="project-form-container">
@@ -261,25 +288,57 @@ export class CreateTodo {
                 <button class="add-project-button">Add</button>
                 <button class="cancel-project-button">Cancel</button>
                 </div>`;
+
             }
             else {
                 addProjectContainer.innerHTML = ''; 
               }
-        }
+              CreateTodo.saveDataToLocalStorage();
     }
+
     static handleAddProject() {
         const newProjectContainer = document.querySelector('.project-name-container');
-        let addProjectInput = document.getElementById('project-name').value;
+        let addProjectInput = document.querySelector('#project-name').value;
     
         if (addProjectInput === '') {
             alert('You will need a Project Name');
         } else {
             const newProjectElement = document.createElement('p');
             newProjectElement.textContent = addProjectInput;
-            newProjectElement.classList.add('page-title'); 
+            newProjectElement.classList.add('page-title');
+            newProjectElement.classList.add('page-title-delete');
             newProjectContainer.appendChild(newProjectElement);
+            CreateTodo.projects.push(addProjectInput);
+            CreateTodo.saveDataToLocalStorage(); 
+            console.log(CreateTodo.projects,'projects')
         }
     }
+    static initialize() {
+        CreateTodo.loadDataFromLocalStorage();
+        CreateTodo.deleteProjects(); 
+    }
     
+    static deleteProjects() {
+        const deleteProjects = document.querySelectorAll('.page-title');
+    
+        deleteProjects.forEach(deleteProject => {
+            deleteProject.addEventListener('dblclick', (event) => {
+                const target = event.target;
+    
+                if (target.classList.contains('page-title-delete')) {
+                    const projectName = target.textContent;
+    
+                    
+                    CreateTodo.projects = CreateTodo.projects.filter(project => project !== projectName);
+    
+                    
+                    target.remove();
+    
+                    
+                    CreateTodo.saveDataToLocalStorage();
+                }
+            });
+        });
+    }
     
 }
