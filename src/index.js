@@ -3,22 +3,23 @@
 import { CreateTodo } from './todolist.js';
 
 function isInboxOrProject() {
-    const isInboxOrProjectNames = document.querySelectorAll('.page-title');
-    CreateTodo.buildProjectOrInbox();
-    isInboxOrProjectNames.forEach((element) => {
-        element.addEventListener('click', (event) => {
-            const target = event.target;
+    const container = document.querySelector('.sidebar-container');
+    container.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target.classList.contains('page-title')) {
             const paragraphContent = target.textContent;
             if (paragraphContent === 'Today' || paragraphContent === 'This Week') {
-                console.error("not valid mofo");
+                CreateTodo.buildProjectOrInbox(paragraphContent);
             } else {
                 CreateTodo.buildProjectOrInbox(paragraphContent);
                 CreateTodo.handleAddTask(paragraphContent);
             }
-        });
+        }
     });
+
     CreateTodo.createProject();
 }
+
 
 
 isInboxOrProject();

@@ -1,3 +1,5 @@
+import { isToday, isThisWeek, startOfDay, endOfWeek, isWithinInterval } from 'date-fns';
+
 export class CreateTodo {
     constructor(title, dueDate, description, priority) {
         this.title = title;
@@ -24,7 +26,8 @@ export class CreateTodo {
         inboxTaskCard.innerHTML = '';
     
         inboxTasks.forEach(todo => {
-            const taskId = todo.id;  
+            const taskId = todo.id;
+    
             const taskContent = `
                 <div class="task-item" data-task-id="${taskId}">
                     <p><strong>Task Name:</strong>${todo.title}</p>
@@ -34,11 +37,54 @@ export class CreateTodo {
                     <button class="deleteButton">Delete</button>
                 </div>`;
             inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
+    
+            // Log the task information
+            console.log(`Task "${todo.title}" with ID ${taskId} displayed in ${paragraphContent}`);
+            console.log('Actual Due Date:', new Date(todo.dueDate));
+            console.log('Today:', startOfDay(new Date()));
+            console.log('Is Today Task:', isToday(new Date(todo.dueDate)));
+        });
+    
+        // Check if the task is scheduled for Today or This Week
+        const today = startOfDay(new Date());
+        const endOfWeekDate = endOfWeek(new Date());
+    
+        inboxTasks.forEach(todo => {
+            const taskId = todo.id;
+    
+            const isTodayTask = isToday(startOfDay(new Date(todo.dueDate)));
+            const isThisWeekTask = isWithinInterval(startOfDay(new Date(todo.dueDate)), { start: today, end: endOfWeekDate });
+    
+            if ((paragraphContent === 'Today' && isTodayTask) || (paragraphContent === 'This Week' && isThisWeekTask)) {
+                const taskContent = `
+                    <div class="task-item" data-task-id="${taskId}">
+                        <p><strong>Task Name:</strong>${todo.title}</p>
+                        <p><strong>Description:</strong>${todo.description}</p>
+                        <p><strong>Due Date:</strong> ${todo.dueDate}</p>
+                        <p><strong>Priority:</strong>${todo.priority}</p>
+                        <button class="deleteButton">Delete</button>
+                    </div>`;
+                inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
+    
+                // Log the task information for Today or This Week
+                console.log(`Task "${todo.title}" with ID ${taskId} displayed in ${paragraphContent}`);
+                console.log('Actual Due Date:', new Date(todo.dueDate));
+                console.log('Today:', startOfDay(new Date()));
+                console.log('Is Today Task:', isToday(new Date(todo.dueDate)));
+            } else {
+                // Add this log to check if the task is not being added to "Today" or "This Week"
+                console.log(`Task "${todo.title}" with ID ${taskId} NOT displayed in ${paragraphContent}`);
+            }
         });
     }
     
+    
+    
+    
     static taskCategories = {
         'Inbox': [],
+        'Today': [],
+        'This Week': [],
       };
 
     static handleAddTask(paragraphContent) {
@@ -94,23 +140,36 @@ export class CreateTodo {
 
     static buildProjectOrInbox(paragraphContent = 'Inbox') {
         const mainContent = document.querySelector('.main-content-container');
-        mainContent.innerHTML =
-          `<div class="inbox-add-task">
-              <h2>${paragraphContent}</h2>
-              <button class="inbox-add-task-button"><span>+</span> Add Task</button>
-              <div class="inbox-task-container"></div>
-              <div class="inbox-task-card-container"></div>
-          </div>`;
-        const addTaskButton = mainContent.querySelector('.inbox-add-task-button');
+        if(paragraphContent === 'Today' || paragraphContent === 'This Week'){
+            mainContent.innerHTML =
+            `<div class="inbox-add-task">
+                <h2>${paragraphContent}</h2>
+                <div class="inbox-task-container"></div>
+                <div class="inbox-task-card-container"></div>
+            </div>`;
+        }
+        else{
+            mainContent.innerHTML =
+            `<div class="inbox-add-task">
+                <h2>${paragraphContent}</h2>
+                <button class="inbox-add-task-button"><span>+</span> Add Task</button>
+                <div class="inbox-task-container"></div>
+                <div class="inbox-task-card-container"></div>
+            </div>`;
+        }
         const inboxTaskCard = mainContent.querySelector('.inbox-task-container');
         const taskCardDisplayDelete = mainContent.querySelector('.inbox-task-card-container');
         let showTaskForm = false;
       
-        addTaskButton.addEventListener('click', () => {
-          showTaskForm = !showTaskForm; 
-          renderTaskForm();
-        });
-      
+        const addTaskButton = mainContent.querySelector('.inbox-add-task-button');
+
+        if (addTaskButton) {
+          addTaskButton.addEventListener('click', () => {
+            showTaskForm = !showTaskForm; 
+            renderTaskForm();
+          });
+        }
+        
         inboxTaskCard.addEventListener('click', (event) => {
           const target = event.target;
           if (target.classList.contains('addTaskButton')) {
@@ -163,8 +222,8 @@ export class CreateTodo {
               </form>`;
           } 
           else {
-            inboxTaskCard.innerHTML = ''; 
-          }
+            inboxTaskCard.innerHTML = ``
+        }
         }
       
         return { mainContent, addTaskButton, inboxTaskCard };
