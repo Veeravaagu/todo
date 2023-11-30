@@ -1,44 +1,96 @@
 export class CreateTodo {
-    constructor(title, dueDate, description, priority, projectName) {
+    constructor(title, dueDate, description, priority) {
         this.title = title;
         this.dueDate = dueDate;
         this.description = description;
         this.priority = priority;
-        this.projectName = projectName;
+        this.id = CreateTodo.generateUniqueId();
+        // console.log(`New Todo created with ID: ${this.id}`);
     }
 
-    static appendTodoToDisplay(todo) {
+    static generateUniqueId() {
+        if (!this.uniqueIdCounter) {
+            this.uniqueIdCounter = 1;
+        } else {
+            this.uniqueIdCounter += 1;
+        }
+        return this.uniqueIdCounter;
+    }
+
+    static appendTodoToDisplay(paragraphContent) {
         const inboxTaskCard = document.querySelector('.inbox-task-card-container');
-        const taskContent = `
-            <div class="task-item">
-                <p><strong>Task Name:</strong> ${todo.title}</p>
-                <p><strong>Description:</strong> ${todo.description}</p>
-                <p><strong>Due Date:</strong> ${todo.dueDate}</p>
-                <p><strong>Priority:</strong> ${todo.priority}</p>
-                <button class="deleteButton">Delete</button>
-            </div>`;
-
-        inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
+        const inboxTasks = CreateTodo.taskCategories[paragraphContent];
+    
+        inboxTaskCard.innerHTML = '';
+    
+        inboxTasks.forEach(todo => {
+            const taskId = todo.id;  
+            const taskContent = `
+                <div class="task-item" data-task-id="${taskId}">
+                    <p><strong>Task Name:</strong>${todo.title}</p>
+                    <p><strong>Description:</strong>${todo.description}</p>
+                    <p><strong>Due Date:</strong> ${todo.dueDate}</p>
+                    <p><strong>Priority:</strong>${todo.priority}</p>
+                    <button class="deleteButton">Delete</button>
+                </div>`;
+            inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
+        });
     }
+    
+    static taskCategories = {
+        'Inbox': [],
+      };
 
-    static handleAddTask() {
-        const name = document.getElementById('name').value;
-        const description = document.getElementById('description').value;
-        const date = document.getElementById('date').value;
-        const priority = document.getElementById('priority').value;
-        if(name !== '' && date !== ''){
-            const todo = new CreateTodo(name, date, description, priority);
-            CreateTodo.appendTodoToDisplay(todo);
-            document.getElementById('taskForm').reset();
-        }
-        else{
-            alert("You will at least need a name and due date");
+    static handleAddTask(paragraphContent) {
+        const nameElement = document.getElementById('name');
+        const descriptionElement = document.getElementById('description');
+        const dateElement = document.getElementById('date');
+        const priorityElement = document.getElementById('priority');
+    
+        if (nameElement && descriptionElement && dateElement && priorityElement) {
+            const name = nameElement.value;
+            const description = descriptionElement.value;
+            const date = dateElement.value;
+            const priority = priorityElement.value;
+    
+            if (name !== '' && date !== '') {
+                const todo = new CreateTodo(name, date, description, priority);
+    
+                if (CreateTodo.taskCategories.hasOwnProperty(paragraphContent)) {
+
+                    CreateTodo.taskCategories[paragraphContent].push(todo);
+                } else {
+                    CreateTodo.taskCategories[paragraphContent] = [todo];
+                }
+                CreateTodo.appendTodoToDisplay(paragraphContent);
+    
+                document.getElementById('taskForm').reset();
+            } else {
+                alert("You will at least need a name and due date");
+            }
+            // CreateTodo.myArr.forEach(todo => {
+            //     console.log(todo.title, todo.dueDate, todo.description, todo.priority);
+            // });
+            // console.log(CreateTodo.taskCategories['Inbox']);
+            // console.log(CreateTodo.taskCategories[paragraphContent],`paragraphContent is ${paragraphContent}`);
+            // // console.log(CreateTodo.myArr[CreateTodo.myArr.length - 1],`paragraphContent is ${paragraphContent}`, 'todo');
+            // console.log(CreateTodo.taskCategories,'check');
         }
     }
+    static deleteTask(taskItem, paragraphContent) {
+        // const inboxTaskCard = document.querySelector('.inbox-task-card-container');
+        const taskId = taskItem.dataset.taskId;
+    
 
-    static deleteTask(taskItem) {
         taskItem.remove();
+    
+
+        CreateTodo.taskCategories[paragraphContent] = CreateTodo.taskCategories[paragraphContent].filter(
+            task => task.id !== parseInt(taskId)  
+        );
     }
+    
+    
 
     static buildProjectOrInbox(paragraphContent = 'Inbox') {
         const mainContent = document.querySelector('.main-content-container');
@@ -62,7 +114,7 @@ export class CreateTodo {
         inboxTaskCard.addEventListener('click', (event) => {
           const target = event.target;
           if (target.classList.contains('addTaskButton')) {
-            CreateTodo.handleAddTask();
+            CreateTodo.handleAddTask(paragraphContent);
             showTaskForm = !showTaskForm; 
             renderTaskForm();
           } else if (target.classList.contains('deleteButton')) {
@@ -72,10 +124,17 @@ export class CreateTodo {
         });
       
         taskCardDisplayDelete.addEventListener('click', (event) => {
-          const taskItem = event.target.closest('.task-item');
-          if (taskItem) {
-          CreateTodo.deleteTask(taskItem);
-      }})
+            const target = event.target;
+            if (target.classList.contains('deleteButton')) {
+                const taskItem = target.closest('.task-item');
+                if (taskItem) {
+                    const paragraphContent = mainContent.querySelector('h2').textContent;
+                    CreateTodo.deleteTask(taskItem, paragraphContent);
+                }
+            }
+        });
+        
+        
       
         function renderTaskForm() {
           if (showTaskForm) {
@@ -158,7 +217,7 @@ export class CreateTodo {
         } else {
             const newProjectElement = document.createElement('p');
             newProjectElement.textContent = addProjectInput;
-            newProjectElement.classList.add('page-title'); // Add the 'page-title' class
+            newProjectElement.classList.add('page-title'); 
             newProjectContainer.appendChild(newProjectElement);
         }
     }
