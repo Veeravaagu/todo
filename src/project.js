@@ -13,30 +13,30 @@
 //     const inboxTaskCard = mainContent.querySelector('.inbox-task-container');
 //     const taskCardDisplayDelete = mainContent.querySelector('.inbox-task-card-container');
 //     let showTaskForm = false;
-  
+
 //     addTaskButton.addEventListener('click', () => {
-//       showTaskForm = !showTaskForm; 
+//       showTaskForm = !showTaskForm;
 //       renderTaskForm();
 //     });
-  
+
 //     inboxTaskCard.addEventListener('click', (event) => {
 //       const target = event.target;
 //       if (target.classList.contains('addTaskButton')) {
 //         CreateTodo.handleAddTask();
-//         showTaskForm = !showTaskForm; 
+//         showTaskForm = !showTaskForm;
 //         renderTaskForm();
 //       } else if (target.classList.contains('deleteButton')) {
-//           showTaskForm = !showTaskForm; 
+//           showTaskForm = !showTaskForm;
 //           renderTaskForm();
 //       }
 //     });
-  
+
 //     taskCardDisplayDelete.addEventListener('click', (event) => {
 //       const taskItem = event.target.closest('.task-item');
 //       if (taskItem) {
 //       CreateTodo.deleteTask(taskItem);
 //   }})
-  
+
 //     function renderTaskForm() {
 //       if (showTaskForm) {
 //         inboxTaskCard.innerHTML = `
@@ -44,30 +44,30 @@
 //             <div class="task-form-container">
 //               <label for="name">Name:</label>
 //               <input type="text" id="name" required>
-  
+
 //               <label for="description">Description:</label>
 //               <textarea id="description" rows="4" required></textarea>
-  
+
 //               <label for="date">Date:</label>
 //               <input type="date" id="date" required>
-  
+
 //               <label for="priority">Priority:</label>
 //               <select id="priority" required>
 //                 <option value="low">Low</option>
 //                 <option value="medium">Medium</option>
 //                 <option value="high">High</option>
 //               </select>
-  
+
 //               <button type="button" class="addTaskButton">Add</button>
 //               <button type="button" class="deleteButton">Delete</button>
 //             </div>
 //           </form>`;
-//       } 
+//       }
 //       else {
-//         inboxTaskCard.innerHTML = ''; 
+//         inboxTaskCard.innerHTML = '';
 //       }
 //     }
-  
+
 //     return { mainContent, addTaskButton, inboxTaskCard };
 //   }
 
@@ -82,11 +82,11 @@
 //                 <p><strong>Priority:</strong> ${todo.priority}</p>
 //                 <button class="deleteButton">Delete</button>
 //             </div>`;
-    
+
 //         inboxTaskCard.insertAdjacentHTML('beforeend', taskContent);
 //     }
 //     static myArr = [];
-    
+
 //     static handleAddTask() {
 //         const name = document.getElementById('name').value;
 //         const description = document.getElementById('description').value;
@@ -96,7 +96,7 @@
 //             const todo = new CreateTodo(name, date, description, priority);
 //             CreateTodo.appendTodoToDisplay(todo);
 //             document.getElementById('taskForm').reset();
-//             CreateTodo.myArr.push(todo);     
+//             CreateTodo.myArr.push(todo);
 //         }
 //         else{
 //             alert("You will at least need a name and due date");
@@ -106,11 +106,11 @@
 //         });
 //         console.log(CreateTodo.myArr[CreateTodo.myArr.length - 1], 'todo');
 //     }
-    
+
 //     static deleteTask(taskItem) {
 //         taskItem.remove();
 //     }
-    
+
 //     static buildProjectOrInbox(paragraphContent = 'Inbox') {
 //         const mainContent = document.querySelector('.main-content-container');
 //         mainContent.innerHTML =
@@ -124,30 +124,30 @@
 //         const inboxTaskCard = mainContent.querySelector('.inbox-task-container');
 //         const taskCardDisplayDelete = mainContent.querySelector('.inbox-task-card-container');
 //         let showTaskForm = false;
-      
+
 //         addTaskButton.addEventListener('click', () => {
-//           showTaskForm = !showTaskForm; 
+//           showTaskForm = !showTaskForm;
 //           renderTaskForm();
 //         });
-      
+
 //         inboxTaskCard.addEventListener('click', (event) => {
 //           const target = event.target;
 //           if (target.classList.contains('addTaskButton')) {
 //             CreateTodo.handleAddTask();
-//             showTaskForm = !showTaskForm; 
+//             showTaskForm = !showTaskForm;
 //             renderTaskForm();
 //           } else if (target.classList.contains('deleteButton')) {
-//               showTaskForm = !showTaskForm; 
+//               showTaskForm = !showTaskForm;
 //               renderTaskForm();
 //           }
 //         });
-      
+
 //         taskCardDisplayDelete.addEventListener('click', (event) => {
 //           const taskItem = event.target.closest('.task-item');
 //           if (taskItem) {
 //           CreateTodo.deleteTask(taskItem);
 //       }})
-      
+
 //         function renderTaskForm() {
 //           if (showTaskForm) {
 //             inboxTaskCard.innerHTML = `
@@ -155,30 +155,30 @@
 //                 <div class="task-form-container">
 //                   <label for="name">Name:</label>
 //                   <input type="text" id="name" required>
-      
+
 //                   <label for="description">Description:</label>
 //                   <textarea id="description" rows="4" required></textarea>
-      
+
 //                   <label for="date">Date:</label>
 //                   <input type="date" id="date" required>
-      
+
 //                   <label for="priority">Priority:</label>
 //                   <select id="priority" required>
 //                     <option value="low">Low</option>
 //                     <option value="medium">Medium</option>
 //                     <option value="high">High</option>
 //                   </select>
-      
+
 //                   <button type="button" class="addTaskButton">Add</button>
 //                   <button type="button" class="deleteButton">Delete</button>
 //                 </div>
 //               </form>`;
-//           } 
+//           }
 //           else {
-//             inboxTaskCard.innerHTML = ''; 
+//             inboxTaskCard.innerHTML = '';
 //           }
 //         }
-      
+
 //         return { mainContent, addTaskButton, inboxTaskCard };
 //       }
 
@@ -197,15 +197,15 @@
 //             if(target.classList.contains('add-project-button')){
 //                 CreateTodo.handleAddProject();
 //                 showProjectForm = !showProjectForm;
-//                 // console.log(showProjectForm,'add') 
+//                 // console.log(showProjectForm,'add')
 //                 renderAddProject()
 //             } else if(target.classList.contains('cancel-project-button')){
 //                 showProjectForm = !showProjectForm;
-//                 // console.log(showProjectForm, 'cancel') 
+//                 // console.log(showProjectForm, 'cancel')
 //                 renderAddProject()
 //             }
-//         });       
-    
+//         });
+
 //         function renderAddProject(){
 //             if(showProjectForm){
 //                 addProjectContainer.innerHTML = `
@@ -216,14 +216,14 @@
 //                 </div>`;
 //             }
 //             else {
-//                 addProjectContainer.innerHTML = ''; 
+//                 addProjectContainer.innerHTML = '';
 //               }
 //         }
 //     }
 //     static handleAddProject() {
 //         const newProjectContainer = document.querySelector('.project-name-container');
 //         let addProjectInput = document.getElementById('project-name').value;
-    
+
 //         if (addProjectInput === '') {
 //             alert('You will need a Project Name');
 //         } else {
@@ -234,4 +234,3 @@
 //         }
 //     }
 // }
-
